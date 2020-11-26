@@ -1,5 +1,5 @@
 serve:
-	docker-compose up -d redis postgres s3
+	docker-compose up -d redis postgres s3 proxy
 	yarn install --pure-lockfile
 	yarn sequelize:migrate --env=production-ssl-disabled
 	yarn build
