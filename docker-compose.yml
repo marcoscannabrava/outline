@@ -34,7 +34,7 @@ services:
       - postgres
       - redis
       - s3
-  proxy:
+  nginx:
     image: nginx
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/conf.d/proxy.conf
