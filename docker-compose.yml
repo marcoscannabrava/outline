@@ -17,7 +17,7 @@ services:
     ports:
       - "4569:4569"
     volumes:
-      - ./fakes3:/fakes3_root
+      - s3data:/fakes3_root
   outline:
     image: outline:v001
     command: yarn dev
@@ -34,3 +34,23 @@ services:
       - postgres
       - redis
       - s3
+  proxy:
+    image: nginx
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/conf.d/proxy.conf
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - postgres
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8181:8080
+    depends_on:
+      - postgres
+
+
+volumes:
+  s3data:

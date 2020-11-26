@@ -1,3 +1,10 @@
+serve:
+	docker-compose up -d redis postgres s3
+	yarn install --pure-lockfile
+	yarn sequelize:migrate --env=production-ssl-disabled
+	yarn build
+	NODE_ENV=production pm2 start ./build/server/index.js --name outline
+	
 up:
 	docker-compose up -d redis postgres s3
 	yarn install --pure-lockfile
