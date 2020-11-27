@@ -17,7 +17,7 @@ RUN yarn build && \
   rm -rf shared && \
   rm -rf app
 
-ENV NODE_ENV production-ssl-disabled
+ENV NODE_ENV production
 CMD yarn start
 
 EXPOSE 3000

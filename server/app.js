@@ -18,7 +18,7 @@ import routes from "./routes";
 import updates from "./utils/updates";
 
 const app = new Koa();
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "production-ssl-disabled";
 const isTest = process.env.NODE_ENV === "test";
 
 app.use(compress());
@@ -109,7 +109,9 @@ if (process.env.SENTRY_DSN) {
 app.on("error", (error, ctx) => {
   // we don't need to report every time a request stops to the bug tracker
   if (error.code === "EPIPE" || error.code === "ECONNRESET") {
-    console.warn("Connection error", { error });
+    console.warn("Connection error", {
+      error
+    });
     return;
   }
 
@@ -161,8 +163,12 @@ app.use(
     },
   })
 );
-app.use(dnsPrefetchControl({ allow: true }));
-app.use(referrerPolicy({ policy: "no-referrer" }));
+app.use(dnsPrefetchControl({
+  allow: true
+}));
+app.use(referrerPolicy({
+  policy: "no-referrer"
+}));
 app.use(mount(routes));
 
 /**

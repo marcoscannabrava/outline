@@ -2,10 +2,12 @@ version: "3"
 services:
   redis:
     image: redis
+    restart: always
     ports:
       - "6479:6379"
   postgres:
     image: postgres
+    restart: always
     ports:
       - "5532:5432"
     environment:
@@ -14,43 +16,40 @@ services:
       POSTGRES_DB: outline
   s3:
     image: lphoward/fake-s3
+    restart: always
     ports:
       - "4569:4569"
     volumes:
       - s3data:/fakes3_root
   outline:
-    image: outline:v001
-    command: yarn dev
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        pull: 1
+    restart: always
+    command: sh -c "yarn sequelize:migrate && yarn start"
+    build: .
     ports:
       - "3000:3000"
     volumes:
-      - .:/opt/outline
+      - .env:/opt/outline/.env
     depends_on:
       - postgres
       - redis
       - s3
   nginx:
     image: nginx
+    restart: always
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/conf.d/proxy.conf
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     depends_on:
       - outline
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8181:8080
-    depends_on:
-      - postgres
-
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - "8181:8080"
+  #   depends_on:
+  #     - postgres
 
 volumes:
   s3data:
